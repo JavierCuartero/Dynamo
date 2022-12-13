@@ -1,0 +1,598 @@
+{
+  "Uuid": "84bcceb8-220e-4cf0-beb6-cb8b227bf380",
+  "IsCustomNode": true,
+  "Category": "DynamoTraining",
+  "Description": "Creates a Sin curve",
+  "Name": "SinCurveByPoints",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Point": {
+        "Key": "Autodesk.DesignScript.Geometry.Point",
+        "Value": "ProtoGeometry.dll"
+      },
+      "Line": {
+        "Key": "Autodesk.DesignScript.Geometry.Line",
+        "Value": "ProtoGeometry.dll"
+      },
+      "Math": {
+        "Key": "DSCore.Math",
+        "Value": "DSCoreNodes.dll"
+      },
+      "NurbsCurve": {
+        "Key": "Autodesk.DesignScript.Geometry.NurbsCurve",
+        "Value": "ProtoGeometry.dll"
+      },
+      "NurbsCurve.ByContr": {
+        "Key": "Autodesk.DesignScript.Geometry.NurbsCurve",
+        "Value": "ProtoGeometry.dll"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "x_value = startnumber..endnumber..#step;\nphase_value;\namplitude_value;\nz_value= Math.Sin(x_value + phase_value) * amplitude_value;\npoints = Point.ByCoordinates(x_value,y,z_value);\nNurbsCurve.ByControlPoints(points,degree);",
+      "Id": "ec4319514e0040259357b1d992bbb947",
+      "Inputs": [
+        {
+          "Id": "df6b38b89f794079857478845357a71d",
+          "Name": "startnumber",
+          "Description": "startnumber",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "afb4fab3f65e474485ab9b7abc8a0ec1",
+          "Name": "endnumber",
+          "Description": "endnumber",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "60825833887246e1b399ad60ea1bbfb8",
+          "Name": "step",
+          "Description": "step",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "23c85efb462143b4bc878eddbdb4864f",
+          "Name": "phase_value",
+          "Description": "phase_value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "18986b1ca28241af9254638cd36c7498",
+          "Name": "amplitude_value",
+          "Description": "amplitude_value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "24a9cac5842c4f618505f4f6359b69b6",
+          "Name": "y",
+          "Description": "y",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "deafdab41dff425cb19252cce784d1cc",
+          "Name": "degree",
+          "Description": "degree",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6db2539851b346689e6de817bc1d176b",
+          "Name": "",
+          "Description": "x_value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4aa480e6bc9f4658a96acf49e69ef4ec",
+          "Name": "",
+          "Description": "Value of expression at line 2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2db5c0df82e54621950af6917ba12b56",
+          "Name": "",
+          "Description": "Value of expression at line 3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "31ef4f28aa4144d7b904777cc7c2971d",
+          "Name": "",
+          "Description": "z_value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "efd1e2c7efc04c35b2823b8b73b8d770",
+          "Name": "",
+          "Description": "points",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "748114703f13451ba38871973228828e",
+          "Name": "",
+          "Description": "Value of expression at line 6",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Symbol, DynamoCore",
+      "NodeType": "InputNode",
+      "Parameter": {
+        "Name": "StartNumber",
+        "TypeName": "double",
+        "TypeRank": 0,
+        "DefaultValue": "0",
+        "Description": "This is the start number for range"
+      },
+      "Id": "9f5acaeedd9649c7b061770998a7416a",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4907484a643445aeb110063f46bd9af0",
+          "Name": "",
+          "Description": "Symbol",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A function parameter, use with custom nodes.\r\n\r\nYou can specify the type and default value for parameter. E.g.,\r\n\r\ninput : var[]..[]\r\nvalue : bool = false"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Symbol, DynamoCore",
+      "NodeType": "InputNode",
+      "Parameter": {
+        "Name": "EndNumber",
+        "TypeName": "double",
+        "TypeRank": 0,
+        "DefaultValue": "10",
+        "Description": "This is the end number for the range"
+      },
+      "Id": "ac6998ec6ac641c78e3139be7acf8cb2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1071fc08b1424c2b87041394268706cc",
+          "Name": "",
+          "Description": "Symbol",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A function parameter, use with custom nodes.\r\n\r\nYou can specify the type and default value for parameter. E.g.,\r\n\r\ninput : var[]..[]\r\nvalue : bool = false"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Symbol, DynamoCore",
+      "NodeType": "InputNode",
+      "Parameter": {
+        "Name": "NumberOfPoints",
+        "TypeName": "double",
+        "TypeRank": 0,
+        "DefaultValue": "10",
+        "Description": "Number of subdivisions"
+      },
+      "Id": "a14924af349c4a0c958b7c2c2c9eafec",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "231a0b563e8d46619b90e50aca515205",
+          "Name": "",
+          "Description": "Symbol",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A function parameter, use with custom nodes.\r\n\r\nYou can specify the type and default value for parameter. E.g.,\r\n\r\ninput : var[]..[]\r\nvalue : bool = false"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Symbol, DynamoCore",
+      "NodeType": "InputNode",
+      "Parameter": {
+        "Name": "PhaseValue",
+        "TypeName": "double",
+        "TypeRank": 0,
+        "DefaultValue": "0",
+        "Description": "Phase value"
+      },
+      "Id": "36e6cf2810bd43b48ecf10225dda2f34",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e49dd7aaaba24656adeaa3558302b25b",
+          "Name": "",
+          "Description": "Symbol",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A function parameter, use with custom nodes.\r\n\r\nYou can specify the type and default value for parameter. E.g.,\r\n\r\ninput : var[]..[]\r\nvalue : bool = false"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Symbol, DynamoCore",
+      "NodeType": "InputNode",
+      "Parameter": {
+        "Name": "AmplitudeValue",
+        "TypeName": "double",
+        "TypeRank": 0,
+        "DefaultValue": "1",
+        "Description": "Amplitude value"
+      },
+      "Id": "9ab2ef553aa4428ebb7e8e597fe14ee2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "26ebdb01dd564bbc9427707de2464816",
+          "Name": "",
+          "Description": "Symbol",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A function parameter, use with custom nodes.\r\n\r\nYou can specify the type and default value for parameter. E.g.,\r\n\r\ninput : var[]..[]\r\nvalue : bool = false"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Symbol, DynamoCore",
+      "NodeType": "InputNode",
+      "Parameter": {
+        "Name": "NurbsCurveDegree",
+        "TypeName": "double",
+        "TypeRank": 0,
+        "DefaultValue": "3",
+        "Description": ""
+      },
+      "Id": "161e34fd36364a26984b152e27456dfb",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6d8fed0733554327aebfab52af3d2b58",
+          "Name": "",
+          "Description": "Symbol",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A function parameter, use with custom nodes.\r\n\r\nYou can specify the type and default value for parameter. E.g.,\r\n\r\ninput : var[]..[]\r\nvalue : bool = false"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Output, DynamoCore",
+      "NodeType": "OutputNode",
+      "ElementResolver": null,
+      "Symbol": "//Output of curve points\r\nCurvePoints",
+      "Id": "44a8f5c3fbbe4e18a65ea5ece3942c11",
+      "Inputs": [
+        {
+          "Id": "440d3565e9e74d7d889a768df36928c5",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [],
+      "Replication": "Disabled",
+      "Description": "A function output, use with custom nodes"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Symbol, DynamoCore",
+      "NodeType": "InputNode",
+      "Parameter": {
+        "Name": "HorizontalTranslation",
+        "TypeName": "double",
+        "TypeRank": 0,
+        "DefaultValue": "0",
+        "Description": "Horizontal translation"
+      },
+      "Id": "4904532946774b739e70948b243229dd",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3eea3806c85342ecbb7bcfed435e63f8",
+          "Name": "",
+          "Description": "Symbol",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A function parameter, use with custom nodes.\r\n\r\nYou can specify the type and default value for parameter. E.g.,\r\n\r\ninput : var[]..[]\r\nvalue : bool = false"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Output, DynamoCore",
+      "NodeType": "OutputNode",
+      "ElementResolver": null,
+      "Symbol": "//Nurbs curve\r\nNurbsCurve",
+      "Id": "55fb3571a130472f83e93352cb0ab7a8",
+      "Inputs": [
+        {
+          "Id": "bb0f00ff1b78427eb03538ab27740e35",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [],
+      "Replication": "Disabled",
+      "Description": "A function output, use with custom nodes"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "efd1e2c7efc04c35b2823b8b73b8d770",
+      "End": "440d3565e9e74d7d889a768df36928c5",
+      "Id": "3e634ab2bc37481886874bdcade9b12b"
+    },
+    {
+      "Start": "748114703f13451ba38871973228828e",
+      "End": "bb0f00ff1b78427eb03538ab27740e35",
+      "Id": "d1ae6b004b8f45589fed9dbf8fdf48a9"
+    },
+    {
+      "Start": "4907484a643445aeb110063f46bd9af0",
+      "End": "df6b38b89f794079857478845357a71d",
+      "Id": "8fafdc0e11d8481dad8b6365cfbd12ef"
+    },
+    {
+      "Start": "1071fc08b1424c2b87041394268706cc",
+      "End": "afb4fab3f65e474485ab9b7abc8a0ec1",
+      "Id": "0caac68ba95a4afebb6804b30c4547f6"
+    },
+    {
+      "Start": "231a0b563e8d46619b90e50aca515205",
+      "End": "60825833887246e1b399ad60ea1bbfb8",
+      "Id": "1acf4794bfa44d80ac6e39efa46a4225"
+    },
+    {
+      "Start": "e49dd7aaaba24656adeaa3558302b25b",
+      "End": "23c85efb462143b4bc878eddbdb4864f",
+      "Id": "4a965dbcd521459fb82eec7b28cddd9f"
+    },
+    {
+      "Start": "26ebdb01dd564bbc9427707de2464816",
+      "End": "18986b1ca28241af9254638cd36c7498",
+      "Id": "0443bfeefbcc412fbf0d9d994be74f76"
+    },
+    {
+      "Start": "6d8fed0733554327aebfab52af3d2b58",
+      "End": "deafdab41dff425cb19252cce784d1cc",
+      "Id": "852f29f904be4068ae43f34dedd0a865"
+    },
+    {
+      "Start": "3eea3806c85342ecbb7bcfed435e63f8",
+      "End": "24a9cac5842c4f618505f4f6359b69b6",
+      "Id": "94714e24ab90402c820d3af0c4c586e1"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Author": "None provided",
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": false,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.12.0.5650",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -203.4884033203125,
+      "EyeY": 418.46978759765625,
+      "EyeZ": 182.00669860839844,
+      "LookX": 203.4884033203125,
+      "LookY": -418.46978759765625,
+      "LookZ": -182.00669860839844,
+      "UpX": 0.52242434024810791,
+      "UpY": 0.71325033903121948,
+      "UpZ": -0.4672759473323822
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "ec4319514e0040259357b1d992bbb947",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 266.89064681718264,
+        "Y": 88.863770616589733
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Input",
+        "Id": "9f5acaeedd9649c7b061770998a7416a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -271.35435791146244,
+        "Y": -61.485126414983938
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Input",
+        "Id": "ac6998ec6ac641c78e3139be7acf8cb2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -282.9047592789201,
+        "Y": 30.01721211922569
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Input",
+        "Id": "a14924af349c4a0c958b7c2c2c9eafec",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -236.76600030703219,
+        "Y": 103.07305954830915
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Input",
+        "Id": "36e6cf2810bd43b48ecf10225dda2f34",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -161.87340051912747,
+        "Y": 191.51885084953108
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Input",
+        "Id": "9ab2ef553aa4428ebb7e8e597fe14ee2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -186.5262979740379,
+        "Y": 271.063389277979
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Input",
+        "Id": "161e34fd36364a26984b152e27456dfb",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -208.02473792919056,
+        "Y": 432.81582962593563
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Output",
+        "Id": "44a8f5c3fbbe4e18a65ea5ece3942c11",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1039.784823871119,
+        "Y": 108.75624726289817
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Input",
+        "Id": "4904532946774b739e70948b243229dd",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -248.79613980413865,
+        "Y": 347.81624199508724
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Output",
+        "Id": "55fb3571a130472f83e93352cb0ab7a8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1061.4604628489676,
+        "Y": 259.35798037433904
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "404feab092db4e0a84a5ac25ad273c2f",
+        "Title": "Cruves",
+        "Nodes": [
+          "ec4319514e0040259357b1d992bbb947"
+        ],
+        "Left": 256.89064681718264,
+        "Top": 35.863770616589733,
+        "Width": 670.0,
+        "Height": 221.0,
+        "FontSize": 36.0,
+        "InitialTop": 88.863770616589733,
+        "InitialHeight": 265.63702275719061,
+        "TextblockHeight": 43.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "b017f14420d24234ba2c8e8a9c9eaaa9",
+        "Title": "DesignScript",
+        "Nodes": [],
+        "Left": 272.19676159202368,
+        "Top": -21.2818992333967,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 588.39682694945873,
+    "Y": 153.11588348832316,
+    "Zoom": 1.4263916465683211
+  }
+}

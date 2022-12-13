@@ -1,0 +1,392 @@
+{
+  "Uuid": "f1e1a67e-27e7-4ebb-a889-3b3776531e76",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Element Collector",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Elements.Element.Para": {
+        "Key": "Revit.Elements.Element",
+        "Value": "RevitNodes.dll"
+      },
+      "Elements.Element": {
+        "Key": "Revit.Elements.Element",
+        "Value": "RevitNodes.dll"
+      },
+      "Revit.Elements.Element.Para": {
+        "Key": "Revit.Elements.Element",
+        "Value": "RevitNodes.dll"
+      },
+      "Revit.Elements.Element": {
+        "Key": "Revit.Elements.Element",
+        "Value": "RevitNodes.dll"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nfrom System.Collections.Generic import *\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nSpaceCats = List[BuiltInCategory]()\r\nSpaceCats.Add(BuiltInCategory.OST_Rooms)\r\nSpaceCats.Add(BuiltInCategory.OST_Areas)\r\n\r\nBuiltInCats = List[BuiltInCategory]()\r\nBuiltInCats.Add(BuiltInCategory.OST_Ceilings)\r\nBuiltInCats.Add(BuiltInCategory.OST_Columns)\r\nBuiltInCats.Add(BuiltInCategory.OST_Casework)\r\nBuiltInCats.Add(BuiltInCategory.OST_CurtainWallPanels)\r\nBuiltInCats.Add(BuiltInCategory.OST_CurtainWallMullions)\r\nBuiltInCats.Add(BuiltInCategory.OST_Doors)\r\nBuiltInCats.Add(BuiltInCategory.OST_Floors)\r\nBuiltInCats.Add(BuiltInCategory.OST_Furniture)\r\nBuiltInCats.Add(BuiltInCategory.OST_GenericModel)\r\nBuiltInCats.Add(BuiltInCategory.OST_Mass)\r\nBuiltInCats.Add(BuiltInCategory.OST_Parking)\r\nBuiltInCats.Add(BuiltInCategory.OST_PlumbingFixtures)\r\nBuiltInCats.Add(BuiltInCategory.OST_StairsRailing)\r\nBuiltInCats.Add(BuiltInCategory.OST_Ramps)\r\nBuiltInCats.Add(BuiltInCategory.OST_Roofs)\r\nBuiltInCats.Add(BuiltInCategory.OST_Stairs)\r\nBuiltInCats.Add(BuiltInCategory.OST_StructuralColumns)\r\nBuiltInCats.Add(BuiltInCategory.OST_StructuralFraming)\r\nBuiltInCats.Add(BuiltInCategory.OST_Topography)\r\nBuiltInCats.Add(BuiltInCategory.OST_Windows)\r\nBuiltInCats.Add(BuiltInCategory.OST_Walls)\r\nBuiltInCats.Add(BuiltInCategory.OST_Grids)\r\nBuiltInCats.Add(BuiltInCategory.OST_Levels)\r\n\r\nMaterials = List[BuiltInCategory]()\r\nMaterials.Add(BuiltInCategory.OST_Materials)\r\n\r\nOpeningCats = List[BuiltInCategory]()\r\nOpeningCats.Add(BuiltInCategory.OST_CeilingOpening)\r\nOpeningCats.Add(BuiltInCategory.OST_FloorOpening)\r\nOpeningCats.Add(BuiltInCategory.OST_RoofOpening)\r\nOpeningCats.Add(BuiltInCategory.OST_ShaftOpening)\r\n\r\nCoordCats = List[BuiltInCategory]()\r\nCoordCats.Add(BuiltInCategory.OST_DuctTerminal)\r\nCoordCats.Add(BuiltInCategory.OST_FireAlarmDevices)\r\nCoordCats.Add(BuiltInCategory.OST_LightingFixtures)\r\nCoordCats.Add(BuiltInCategory.OST_SecurityDevices)\r\nCoordCats.Add(BuiltInCategory.OST_Sprinklers)\r\n\r\nSpaceFilter = ElementMulticategoryFilter(SpaceCats)\r\nBuiltInFilter = ElementMulticategoryFilter(BuiltInCats)\r\nMaterialFilter = ElementMulticategoryFilter(Materials)\r\nOpeningFilter = ElementMulticategoryFilter(OpeningCats)\r\nCoordFilter = ElementMulticategoryFilter(CoordCats)\r\n\r\n\r\nSpaceElements = FilteredElementCollector(doc).WherePasses(SpaceFilter).WhereElementIsNotElementType().ToElements()\r\nBuiltInElements = FilteredElementCollector(doc).WherePasses(BuiltInFilter).WhereElementIsNotElementType().ToElements()\r\nMaterialElements = FilteredElementCollector(doc).WherePasses(MaterialFilter).WhereElementIsNotElementType().ToElements()\r\nOpeningElements = FilteredElementCollector(doc).WherePasses(OpeningFilter).WhereElementIsNotElementType().ToElements()\r\nCoordElements = FilteredElementCollector(doc).WherePasses(CoordFilter).WhereElementIsNotElementType().ToElements()\r\n\r\n\r\nOUT = SpaceElements, BuiltInElements, MaterialElements, OpeningElements, CoordElements",
+      "VariableInputPorts": true,
+      "Id": "0e64c4b49f1c435b9afe6f1c9dbf0485",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4e7e7e148db746f49ec43e5b8be56103",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nfrom System.Collections.Generic import *\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nSpaceCats = List[BuiltInCategory]()\r\nSpaceCats.Add(BuiltInCategory.OST_Rooms)\r\nSpaceCats.Add(BuiltInCategory.OST_Areas)\r\n\r\nBuiltInCats = List[BuiltInCategory]()\r\nBuiltInCats.Add(BuiltInCategory.OST_Ceilings)\r\nBuiltInCats.Add(BuiltInCategory.OST_Columns)\r\nBuiltInCats.Add(BuiltInCategory.OST_Casework)\r\nBuiltInCats.Add(BuiltInCategory.OST_CurtainWallPanels)\r\nBuiltInCats.Add(BuiltInCategory.OST_CurtainWallMullions)\r\nBuiltInCats.Add(BuiltInCategory.OST_Doors)\r\nBuiltInCats.Add(BuiltInCategory.OST_Floors)\r\nBuiltInCats.Add(BuiltInCategory.OST_Furniture)\r\nBuiltInCats.Add(BuiltInCategory.OST_GenericModel)\r\nBuiltInCats.Add(BuiltInCategory.OST_Mass)\r\nBuiltInCats.Add(BuiltInCategory.OST_Parking)\r\nBuiltInCats.Add(BuiltInCategory.OST_PlumbingFixtures)\r\nBuiltInCats.Add(BuiltInCategory.OST_StairsRailing)\r\nBuiltInCats.Add(BuiltInCategory.OST_Ramps)\r\nBuiltInCats.Add(BuiltInCategory.OST_Roofs)\r\nBuiltInCats.Add(BuiltInCategory.OST_Stairs)\r\nBuiltInCats.Add(BuiltInCategory.OST_StructuralColumns)\r\nBuiltInCats.Add(BuiltInCategory.OST_StructuralFraming)\r\nBuiltInCats.Add(BuiltInCategory.OST_Topography)\r\nBuiltInCats.Add(BuiltInCategory.OST_Windows)\r\nBuiltInCats.Add(BuiltInCategory.OST_Walls)\r\nBuiltInCats.Add(BuiltInCategory.OST_Grids)\r\nBuiltInCats.Add(BuiltInCategory.OST_Levels)\r\n\r\nMaterials = List[BuiltInCategory]()\r\nMaterials.Add(BuiltInCategory.OST_Materials)\r\n\r\nOpeningCats = List[BuiltInCategory]()\r\nOpeningCats.Add(BuiltInCategory.OST_CeilingOpening)\r\nOpeningCats.Add(BuiltInCategory.OST_FloorOpening)\r\nOpeningCats.Add(BuiltInCategory.OST_RoofOpening)\r\nOpeningCats.Add(BuiltInCategory.OST_ShaftOpening)\r\n\r\nCoordCats = List[BuiltInCategory]()\r\nCoordCats.Add(BuiltInCategory.OST_DuctTerminal)\r\nCoordCats.Add(BuiltInCategory.OST_FireAlarmDevices)\r\nCoordCats.Add(BuiltInCategory.OST_LightingFixtures)\r\nCoordCats.Add(BuiltInCategory.OST_SecurityDevices)\r\nCoordCats.Add(BuiltInCategory.OST_Sprinklers)\r\n\r\nSpaceFilter = ElementMulticategoryFilter(SpaceCats)\r\nBuiltInFilter = ElementMulticategoryFilter(BuiltInCats)\r\nMaterialFilter = ElementMulticategoryFilter(Materials)\r\nOpeningFilter = ElementMulticategoryFilter(OpeningCats)\r\nCoordFilter = ElementMulticategoryFilter(CoordCats)\r\n\r\n\r\nSpaceElements = FilteredElementCollector(doc).WherePasses(SpaceFilter).ToElements()\r\nBuiltInElements = FilteredElementCollector(doc).WherePasses(BuiltInFilter).ToElements()\r\nMaterialElements = FilteredElementCollector(doc).WherePasses(MaterialFilter).ToElements()\r\nOpeningElements = FilteredElementCollector(doc).WherePasses(OpeningFilter).ToElements()\r\nCoordElements = FilteredElementCollector(doc).WherePasses(CoordFilter).ToElements()\r\n\r\n\r\nOUT = SpaceElements, BuiltInElements, MaterialElements, OpeningElements, CoordElements",
+      "VariableInputPorts": true,
+      "Id": "d8a91fba023d4144bb9fe4d5e3800f8f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "ac5067468c024babb1d94dca1e8e08ce",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nfrom System.Collections.Generic import *\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nAnnCats = List[BuiltInCategory]()\r\nAnnCats.Add(BuiltInCategory.OST_Callouts)\r\nAnnCats.Add(BuiltInCategory.OST_DetailComponents)\r\nAnnCats.Add(BuiltInCategory.OST_Dimensions)\r\nAnnCats.Add(BuiltInCategory.OST_ElevationMarks)\r\nAnnCats.Add(BuiltInCategory.OST_Elev)\r\nAnnCats.Add(BuiltInCategory.OST_FilledRegion)\r\nAnnCats.Add(BuiltInCategory.OST_GridHeads)\r\nAnnCats.Add(BuiltInCategory.OST_LevelHeads)\r\nAnnCats.Add(BuiltInCategory.OST_Lines)\r\nAnnCats.Add(BuiltInCategory.OST_MaskingRegion)\r\n\r\n\r\n\r\nLayoutCats = List[BuiltInCategory]()\r\nLayoutCats.Add(BuiltInCategory.OST_ScheduleGraphics)\r\nLayoutCats.Add(BuiltInCategory.OST_Schedules)\r\nLayoutCats.Add(BuiltInCategory.OST_PanelScheduleGraphics)\r\nLayoutCats.Add(BuiltInCategory.OST_ColorFillLegends)\r\nLayoutCats.Add(BuiltInCategory.OST_TitleBlocks)\r\nLayoutCats.Add(BuiltInCategory.OST_Views)\r\nLayoutCats.Add(BuiltInCategory.OST_Sheets)\r\n\r\n\r\n\r\n\r\nAnnFilter = ElementMulticategoryFilter(AnnCats)\r\nLayoutFilter = ElementMulticategoryFilter(LayoutCats)\r\n\r\n\r\nAnnElements = FilteredElementCollector(doc).WherePasses(AnnFilter).WhereElementIsNotElementType().ToElements()\r\nLayoutElements = FilteredElementCollector(doc).WherePasses(LayoutFilter).WhereElementIsNotElementType().ToElements()\r\n\r\n\r\nOUT = AnnElements, LayoutElements",
+      "VariableInputPorts": true,
+      "Id": "17d88e82b909444ea83a860d609e7bd8",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "656f3d954e5d40239796513eb31ea3ce",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "RoomsOut = x[0];\nModelElementsOut = x[1];\nMaterialsOut = x[2];\nOpeningsOut = x[3];\nCoordinationOut = x[4];",
+      "Id": "bec0c6fe63e4406ebe2b2d7062362600",
+      "Inputs": [
+        {
+          "Id": "f23de4e9acb4402f9f32e50bfe21cbce",
+          "Name": "x",
+          "Description": "x",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6dcd52105541421ab546a2fd70fd2f32",
+          "Name": "",
+          "Description": "RoomsOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8fdddabb0cca4831bd9173fe03c0d982",
+          "Name": "",
+          "Description": "ModelElementsOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "36faa5a8e94449b5a95777f9776f78bf",
+          "Name": "",
+          "Description": "MaterialsOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b0afb872f51a4314bde1ef273a4b7365",
+          "Name": "",
+          "Description": "OpeningsOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4c166560192e453298eb3966cd923d6c",
+          "Name": "",
+          "Description": "CoordinationOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "/* Possible Spreadsheets:\n\n1. Rooms\n2. Areas\n\n\n3. Materials\n3. Families in the model\n5. Views\n\tView Templates\n\tView Filters\n6. Sheets\n7. Workset overview\n8. Grids & Levels\n8. Model Overview:\n\tWarning count\n\tFile Size\n\tTotal elements in model\n\tPurgable elements\n\tViews count\n\tViews not on sheets\n\tViews with hidden elements\n\n9.Performance\n\tModel groups\n\tDetail groups\n\tImports\n\t\tCAD\n\t\tCustom Object Styles\n\t\tImages\n\tLinks\n\t\tRevit\n\t\tCAD links\n\tWorksets\n\tDesign options\n\n*/;",
+      "Id": "6660afd676614ed09a3e961ed1dade44",
+      "Inputs": [],
+      "Outputs": [],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "RoomsOut = x[0];\nModelElementsOut = x[1];\nMaterialsOut = x[2];\nOpeningsOut = x[3];\nCoordinationOut = x[4];",
+      "Id": "471131db26a140cb9c2020312d8c58ce",
+      "Inputs": [
+        {
+          "Id": "3e8b1427afe14ebf97013fa4931828a1",
+          "Name": "x",
+          "Description": "x",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0b3bd604f5574371ab78262da3751317",
+          "Name": "",
+          "Description": "RoomsOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "36656df6a04646be9ac3ffca11589f95",
+          "Name": "",
+          "Description": "ModelElementsOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e9a86e837a1f49809d233354daa64d5e",
+          "Name": "",
+          "Description": "MaterialsOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "351d034084b24f428bd82971a0f1fb7a",
+          "Name": "",
+          "Description": "OpeningsOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "22490bf63ff94b8a8e840edd65b54616",
+          "Name": "",
+          "Description": "CoordinationOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "AnnotationsOut = x[0];\nLayoutsOut = x[1];",
+      "Id": "9ab36f11eabb419298686bc411f574cd",
+      "Inputs": [
+        {
+          "Id": "d94c74ccca6c4102a8d9bcf0fce25522",
+          "Name": "x",
+          "Description": "x",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "63865ae1c2a24d5088ce520d5d6a0126",
+          "Name": "",
+          "Description": "AnnotationsOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7c4b98667bef4b38a59bb599e5fa3e63",
+          "Name": "",
+          "Description": "LayoutsOut",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "4e7e7e148db746f49ec43e5b8be56103",
+      "End": "f23de4e9acb4402f9f32e50bfe21cbce",
+      "Id": "3264f6bb335e4f97bdc2217028c94eee"
+    },
+    {
+      "Start": "ac5067468c024babb1d94dca1e8e08ce",
+      "End": "3e8b1427afe14ebf97013fa4931828a1",
+      "Id": "c13d0165765f4ba38aa26a1fd1b74475"
+    },
+    {
+      "Start": "656f3d954e5d40239796513eb31ea3ce",
+      "End": "d94c74ccca6c4102a8d9bcf0fce25522",
+      "Id": "653fb9f326f141bd98353fa7ab4d5204"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.1.8786",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "ElementInstance Collector",
+        "Id": "0e64c4b49f1c435b9afe6f1c9dbf0485",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -730.49503400995945,
+        "Y": -1653.1097910709468
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "DocumentElement Collector",
+        "Id": "d8a91fba023d4144bb9fe4d5e3800f8f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -738.65013169146823,
+        "Y": -1878.4667188199553
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "AnnotationInstance Collector",
+        "Id": "17d88e82b909444ea83a860d609e7bd8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -736.08370937998643,
+        "Y": -1450.2379005325176
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "bec0c6fe63e4406ebe2b2d7062362600",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -405.28064306969156,
+        "Y": -1646.512894219074
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "6660afd676614ed09a3e961ed1dade44",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1417.9476593299571,
+        "Y": -1880.3485480538434
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "471131db26a140cb9c2020312d8c58ce",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -408.31773417714317,
+        "Y": -1876.0663473391492
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "9ab36f11eabb419298686bc411f574cd",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -389.64532117305055,
+        "Y": -1445.9699425528397
+      }
+    ],
+    "Annotations": [],
+    "X": 793.66953599233568,
+    "Y": 1051.6510069057872,
+    "Zoom": 0.47519082966368059
+  }
+}
