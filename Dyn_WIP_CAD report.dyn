@@ -1,0 +1,568 @@
+{
+  "Uuid": "5b4087cd-899b-4c84-a609-7a98343cdf67",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Report",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "List": {
+        "Key": "List",
+        "Value": "BuiltIn.ds"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\n\n# Import RevitAPI\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\n\n# Import DocumentManager and TransactionManager\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\n#\ndef convertToList(listToConvert):\n\tif isinstance(listToConvert, list):\n\t\treturn listToConvert\n\telse:\n\t\treturn [listToConvert]\n\ndef cadAuditReporter(doc):\n\tcadLinkCollector = FilteredElementCollector(doc).OfClass(ImportInstance)\n\tcadLinks = cadLinkCollector.ToElements()\n\t\n\tCADLinkList = []\n\tCADImportList = []\n\treport = []\n\tfor cad in cadLinks:\n\t\tname = cad.Parameter[BuiltInParameter.IMPORT_SYMBOL_NAME].AsString()\n\t\tisLinked = cad.IsLinked\n\t\tviewSpecific = cad.ViewSpecific \n\t\tlevelHost = doc.GetElement(cad.LevelId)\n\t\t\n\t\townerViewId = \"Owner View : N/A\"\n\t\tif viewSpecific:\n\t\t\townerViewId = doc.GetElement( cad.OwnerViewId )\n\t\t\t\n\t\tworkSetId = cad.WorksetId\n\t\tworksetNames = None\n\t\twSetsInDoc = FilteredWorksetCollector( doc )\n\t\tfor w in wSetsInDoc:\n\t\t\tif w.Id == workSetId:\n\t\t\t\tworksetNames = \"Workset : \" + w.Name\n\t\t\n\t\ttry:\n\t\t\tcadType = doc.GetElement( cad.GetTypeId() )\n\t\t\tcadExternalRef = cadType.GetExternalFileReference()\n\t\t\tpath = ModelPathUtils.ConvertModelPathToUserVisiblePath( cadExternalRef.GetAbsolutePath() )\n\t\t\n\t\texcept:\n\t\t\tpath = \"Path : N/A\"\n\t\t\n\t\tif isLinked:\n\t\t\tcadType = doc.GetElement( cad.GetTypeId() )\n\t\t\texRef = cadType.GetExternalFileReference()\n\t\t\tlinkStatus = exRef.GetLinkedFileStatus()\n\t\telse:\n\t\t\tlinkStatus = \"Not a Link\"\n\t\t\n\t\tCADLinkList.Add( cad ) if isLinked else CADImportList.Add( cad )\t\t\n\t\treport.Add( [cad, name, \"Is Linked : \" + str(isLinked), \"Status : \" + str(linkStatus), \"View Specific : \" + str(viewSpecific), ownerViewId, worksetNames, path, levelHost] )\n\t\t\t\n\treturn report, CADLinkList, CADImportList\n\nuiapp = DocumentManager.Instance.CurrentUIApplication\napp = uiapp.Application\n\nprocessDocument = None\nif IN[0] == \"\" or IN[0] == []:\n\tdoc = DocumentManager.Instance.CurrentDBDocument\n\tprocessDocument = cadAuditReporter(doc)\n\treport = processDocument[0]\n\tCADLinkList = processDocument[1]\n\tCADImportList = processDocument[2]\n\t\nelse:\n\treport = []\n\tCADLinkList = []\n\tCADImportList = []\n\tfilePath = convertToList(IN[0])\n\tfor path in filePath:\n\t\tdoc = app.OpenDocumentFile(FilePath( str(path) ), OpenOptions())\n\t\tprocessDocument = cadAuditReporter(doc) \n\t\treport.Add(processDocument[0])\n\t\tCADLinkList.Add(processDocument[1])\n\t\tCADImportList.Add(processDocument[2])\n\nOUT = \"No Linked or Imported CAD files found\" if report == [] else report, CADLinkList, CADImportList",
+      "VariableInputPorts": true,
+      "Id": "251a792fadbd402290b762b975442c39",
+      "Inputs": [
+        {
+          "Id": "bf2f8ec0c3c44dcf849fd001c6b7d387",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "fd764470bb08413391feb3cba6368383",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "CADLinks;",
+      "Id": "b420de2b809848deab686d2463ab1bbf",
+      "Inputs": [
+        {
+          "Id": "c8f08b1545c2478ea6cbdfecabff63a4",
+          "Name": "CADLinks",
+          "Description": "CADLinks",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e1df1ba83be64c798967d03ab98533e9",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "CADImports;",
+      "Id": "d66e16088d404b26845a818ffdf7a2b4",
+      "Inputs": [
+        {
+          "Id": "6036ab9d98444bb79d18b461787b6b29",
+          "Name": "CADImports",
+          "Description": "CADImports",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "448c40dd9cb34fcb92f916f284c30c84",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "report = output[0];\ncad_links = output[1];\ncad_imports = output[2];",
+      "Id": "cf01685f85cf4d82b73e758efbee1d53",
+      "Inputs": [
+        {
+          "Id": "bb241085c3bc414480f915cfaee547a5",
+          "Name": "output",
+          "Description": "output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "56b6c649cb434c6cb24927bfaae71c53",
+          "Name": "",
+          "Description": "report",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2cc3c134455544068ad0a8203ac695f1",
+          "Name": "",
+          "Description": "cad_links",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4f40e95683364ead9d20fb3b87f77e29",
+          "Name": "",
+          "Description": "cad_imports",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "//To report the current document leave unconnected. To report an external Revit document or Family\n//input a File Path and the file will be audited silently (without needing to open the file)\nfilePath:string=\"\";",
+      "Id": "4cee74c8cd034715a886bec30d800f11",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a9395d36d1f64d54962c90d11d9d147f",
+          "Name": "",
+          "Description": "filePath",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "//To refresh, switch a bool input to its opposing state\nrefresh:bool=true;",
+      "Id": "0f124883646d4dc4b146d6d1318804d0",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "481aa275881c43968479bc337e86170a",
+          "Name": "",
+          "Description": "refresh",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "report;\n\n// Get report values\ncad_instance = List.GetItemAtIndex(report@L2<1>, 0);\ncad_name = List.GetItemAtIndex(report@L2<1>, 1);\nis_cad_linked = List.GetItemAtIndex(report@L2<1>, 2);\ncad_status = List.GetItemAtIndex(report@L2<1>, 3);\ncad_view_placed = List.GetItemAtIndex(report@L2<1>, 5);\ncad_path = List.GetItemAtIndex(report@L2<1>, 7);\ncad_level_placed = List.GetItemAtIndex(report@L2<1>, 8);",
+      "Id": "750358d3b9104320b4ac75304a2aaf22",
+      "Inputs": [
+        {
+          "Id": "0f20768aebc74d938750fdf86e9c26db",
+          "Name": "report",
+          "Description": "report",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d5595f5b4df94975a13fbee50f3b1673",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9bca7efd06f2409287969ff347e25c91",
+          "Name": "",
+          "Description": "cad_instance",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "dd8db163103d41459a5555c6d35025ac",
+          "Name": "",
+          "Description": "cad_name",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "22c84597692a41f7ab1859d4000ac8e7",
+          "Name": "",
+          "Description": "is_cad_linked",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5be8f9c1e7d743d7a28228c3cbc58f68",
+          "Name": "",
+          "Description": "cad_status",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "bf0e49820aaa4c9ebd09202b87655fc2",
+          "Name": "",
+          "Description": "cad_view_placed",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1fbdbdf9a26b451fbcdedf98099f0edb",
+          "Name": "",
+          "Description": "cad_path",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "237de0b3b0044db7a8aaf82cb1d2b6e7",
+          "Name": "",
+          "Description": "cad_level_placed",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "43b84ff2616e4ae2b260417329025d68",
+      "Inputs": [
+        {
+          "Id": "de662a42b5384c4cbd5f1ba628a34eaa",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b83b55e253b9409dab8e5b7aaafc9873",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "fd764470bb08413391feb3cba6368383",
+      "End": "bb241085c3bc414480f915cfaee547a5",
+      "Id": "5bdf7921fc6d4a24b0bccd90cf9505c3"
+    },
+    {
+      "Start": "56b6c649cb434c6cb24927bfaae71c53",
+      "End": "0f20768aebc74d938750fdf86e9c26db",
+      "Id": "1b0ce83cde0e40f4a654de6b1939b13d"
+    },
+    {
+      "Start": "2cc3c134455544068ad0a8203ac695f1",
+      "End": "c8f08b1545c2478ea6cbdfecabff63a4",
+      "Id": "20749f29bd934f71ab3d54ac2eca114e"
+    },
+    {
+      "Start": "4f40e95683364ead9d20fb3b87f77e29",
+      "End": "6036ab9d98444bb79d18b461787b6b29",
+      "Id": "0da5605c33b042c5b5e6af4356ff97ee"
+    },
+    {
+      "Start": "a9395d36d1f64d54962c90d11d9d147f",
+      "End": "bf2f8ec0c3c44dcf849fd001c6b7d387",
+      "Id": "77eb52fad72346b49a5151735267fad3"
+    },
+    {
+      "Start": "d5595f5b4df94975a13fbee50f3b1673",
+      "End": "de662a42b5384c4cbd5f1ba628a34eaa",
+      "Id": "fdfa16255e8c4ac18aeab3cb04c237f5"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.2.15705",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "251a792fadbd402290b762b975442c39",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1521.9242362675491,
+        "Y": 37.953433638520437
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "b420de2b809848deab686d2463ab1bbf",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2224.0744331351675,
+        "Y": 126.43070011415298
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "d66e16088d404b26845a818ffdf7a2b4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2220.276126868418,
+        "Y": 241.13526611499947
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "cf01685f85cf4d82b73e758efbee1d53",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1731.1669273342181,
+        "Y": 39.343547073056243
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "4cee74c8cd034715a886bec30d800f11",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 759.39930362514963,
+        "Y": 5.2094535783916989
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "0f124883646d4dc4b146d6d1318804d0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 876.37672368386086,
+        "Y": 207.31199795542173
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "750358d3b9104320b4ac75304a2aaf22",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2213.0455671755049,
+        "Y": -151.751094799659
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "43b84ff2616e4ae2b260417329025d68",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2797.7581825220336,
+        "Y": -154.82664520336394
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "6c386e6274844e0d8fd73ebc4c1c77f9",
+        "Title": "NODE DETAILS",
+        "Nodes": [
+          "3a4e155bd7e34b759701283a19c66ff7",
+          "563de3f0e330465298cf7bf438a07dcb",
+          "3253165a1ef4424683b8e8b7534c0102",
+          "d27c465143df4023afb772bdd4e23c27",
+          "6d2b98005b0c4f4482828993f23ca239",
+          "a1b30c16a9ed42559369b78e55108c7f"
+        ],
+        "Left": 345.88201952200859,
+        "Top": -80.763088225109868,
+        "Width": 323.35813892334306,
+        "Height": 813.02175224732582,
+        "FontSize": 36.0,
+        "InitialTop": -27.763088225109868,
+        "InitialHeight": 769.02175224732582,
+        "TextblockHeight": 43.0,
+        "Background": "#FFD8D8D8"
+      },
+      {
+        "Id": "3a4e155bd7e34b759701283a19c66ff7",
+        "Title": "AUTHOR + COPYRIGHT\r\n________________________________________________________\r\n\r\nCopyright 2017 Bimorph Consultancy \r\nThomas Mahon\r\n@Thomas__Mahon",
+        "Nodes": [],
+        "Left": 356.53616856306667,
+        "Top": 57.014398492837046,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "563de3f0e330465298cf7bf438a07dcb",
+        "Title": "CONTACT\r\n________________________________________________________\r\n\r\nwww.bimorph.co.uk\r\n\r\ninfo@bimorph.co.uk\r\n@bimorphBIM",
+        "Nodes": [],
+        "Left": 355.91003294667166,
+        "Top": 172.82669076129503,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "d27c465143df4023afb772bdd4e23c27",
+        "Title": "GITHUB\r\n________________________________________________________\r\n\r\nTo report bugs or suggest improvements or new features, visit:\r\n\r\nhttps://github.com/ThomasMahon/bimorphNodes/",
+        "Nodes": [],
+        "Left": 360.24015844535165,
+        "Top": 601.258664022216,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "6d2b98005b0c4f4482828993f23ca239",
+        "Title": "FOLLOW US\r\n________________________________________________________\r\n\r\nFollow us to get the latest digital engineering news & be the first to hear about bimorphNodes updates:\r\n\r\nFACEBOOK:  facebook.com/bimorphBIM\r\nLINKEDIN:  linkedin.com/company/bimorph-bim\r\nTWITTER:  @bimorphBIM",
+        "Nodes": [],
+        "Left": 358.25941915884061,
+        "Top": 437.83629222377107,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "a1b30c16a9ed42559369b78e55108c7f",
+        "Title": "USER GUIDE + DOWNLOADS\r\n________________________________________________________\r\n\r\nFor bimorphNodes user guides and downloadable example graphs, visit:\r\n\r\nwww.bimorph.co.uk/bimorph-nodes",
+        "Nodes": [],
+        "Left": 356.80018436509658,
+        "Top": 306.287328234534,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "3253165a1ef4424683b8e8b7534c0102",
+        "Title": "PACKAGE NAME\r\n________________________________________________________\r\n\r\nbimorphNodes",
+        "Nodes": [],
+        "Left": 355.88201952200859,
+        "Top": -27.763088225109868,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": -1896.4625417729699,
+    "Y": 232.01693805926891,
+    "Zoom": 0.88467542334045424
+  }
+}
